@@ -9,7 +9,7 @@ class AdminDashboard {
     init() {
         this.setupEventListeners();
         this.checkAuthState();
-        this.loadStats();
+        this.loadCertificates();
     }
 
     setupEventListeners() {
@@ -72,23 +72,30 @@ class AdminDashboard {
     }
 
     showLogin() {
-        // Create login form
+        // Remove any existing login forms first
+        const existingLogin = document.querySelector('.login-overlay');
+        if (existingLogin) {
+            existingLogin.remove();
+        }
+        
+        // Create login form with unique class
         const loginForm = document.createElement('div');
+        loginForm.className = 'login-overlay';
         loginForm.innerHTML = `
             <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
                 <div style="background: white; padding: 40px; border-radius: 8px; width: 400px; max-width: 90%;">
                     <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">تسجيل دخول المدير</h2>
-                    <form id="loginForm">
+                    <form class="admin-login-form">
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600;">اسم المستخدم:</label>
-                            <input type="text" id="loginUsername" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px;" required>
+                            <input type="text" class="admin-username" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px;" required>
                         </div>
                         <div style="margin-bottom: 30px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600;">كلمة المرور:</label>
-                            <input type="password" id="loginPassword" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px;" required>
+                            <input type="password" class="admin-password" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px;" required>
                         </div>
                         <button type="submit" style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">دخول</button>
-                        <div id="loginError" style="color: #e74c3c; margin-top: 15px; text-align: center; display: none;"></div>
+                        <div class="login-error" style="color: #e74c3c; margin-top: 15px; text-align: center; display: none;"></div>
                     </form>
                 </div>
             </div>
@@ -96,10 +103,10 @@ class AdminDashboard {
         
         document.body.appendChild(loginForm);
         
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        loginForm.querySelector('.admin-login-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
+            const username = loginForm.querySelector('.admin-username').value;
+            const password = loginForm.querySelector('.admin-password').value;
             
             if (username === 'admin' && password === 'taha2025') {
                 // Simulate successful login
@@ -108,8 +115,9 @@ class AdminDashboard {
                 document.body.removeChild(loginForm);
                 this.loadCertificates();
             } else {
-                document.getElementById('loginError').style.display = 'block';
-                document.getElementById('loginError').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+                const errorDiv = loginForm.querySelector('.login-error');
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
             }
         });
     }
@@ -426,12 +434,15 @@ class AdminDashboard {
                             </span>
                         </td>
                         <td>
-                            <div class="action-buttons-table">
-                                <button class="btn-view" onclick="adminDashboard.viewCertificate('${cert.certificateId}')">
-                                    <i class="fas fa-eye"></i> عرض
+                            <div class="action-buttons">
+                                <button onclick="admin.viewCertificate('${cert.certificateId || cert.id}')" class="btn-view" title="عرض الشهادة">
+                                    <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-delete" onclick="adminDashboard.deleteCertificate('${cert.id}')">
-                                    <i class="fas fa-trash"></i> حذف
+                                <button onclick="admin.copyCertificateLink('${cert.certificateId || cert.id}')" class="btn-copy" title="نسخ رابط الشهادة">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button onclick="admin.deleteCertificate('${cert.id}')" class="btn-delete" title="حذف الشهادة">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
@@ -462,25 +473,93 @@ class AdminDashboard {
         window.open(link, '_blank');
     }
 
-    async deleteCertificate(docId) {
-        if (confirm('هل أنت متأكد من حذف هذه الشهادة؟')) {
+    getCertificateStatus(expiryDate) {
+        const today = new Date();
+        const expiry = new Date(expiryDate);
+        const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+
+        if (daysUntilExpiry < 0) {
+            return 'expired';
+        } else if (daysUntilExpiry <= 30) {
+            return 'expiring';
+        } else {
+            return 'active';
+        }
+    }
+
+    async loadCertificates() {
+        try {
+            // Try to load certificates from Firestore
+            const snapshot = await db.collection('certificates').get();
+            
+            this.certificates = [];
+            snapshot.forEach((doc) => {
+                this.certificates.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            console.log('Loaded certificates from Firestore:', this.certificates.length);
+            
+        } catch (error) {
+            console.error('Error loading from Firestore:', error);
+            // Fallback: load from localStorage
+            const localCerts = JSON.parse(localStorage.getItem('certificates') || '[]');
+            this.certificates = localCerts;
+            console.log('Loaded certificates from localStorage:', this.certificates.length);
+        }
+        
+        // Sort by creation date (newest first)
+        this.certificates.sort((a, b) => {
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
+            return dateB - dateA;
+        });
+        
+        // Render certificates table and update stats
+        this.renderCertificatesTable();
+        await this.loadStats();
+    }
+
+    async loadStats() {
+        try {
+            // Calculate stats from loaded certificates
+            let total = this.certificates.length;
+            let active = 0;
+            let expiring = 0;
+
+            this.certificates.forEach((cert) => {
+                const status = this.getCertificateStatus(cert.expiryDateGregorian);
+                if (status === 'active') {
+                    active++;
+                } else if (status === 'expiring') {
+                    expiring++;
+                }
+            });
+
+            const stats = { total, active, expiring, lastUpdated: new Date().toISOString() };
+            
+            // Store stats in Firebase
             try {
-                this.showLoading();
-                await db.collection('certificates').doc(docId).delete();
-                this.hideLoading();
-                this.showSuccess('تم حذف الشهادة بنجاح!');
-                this.loadCertificates();
-                this.loadStats();
-                this.renderCertificatesTable();
+                await db.collection('system').doc('statistics').set(stats);
+                console.log('Stats saved to Firebase:', stats);
             } catch (error) {
-                this.hideLoading();
-                this.showError('حدث خطأ أثناء حذف الشهادة: ' + error.message);
+                console.error('Error saving stats to Firebase:', error);
+                // Fallback to localStorage
+                localStorage.setItem('certificateStats', JSON.stringify(stats));
             }
+
+            document.getElementById('totalCertificates').textContent = total;
+            document.getElementById('activeCertificates').textContent = active;
+            document.getElementById('expiringSoon').textContent = expiring;
+        } catch (error) {
+            console.error('Error loading stats:', error);
         }
     }
 
     searchCertificates(query) {
-        const filteredCertificates = this.certificates.filter(cert => 
+        const filteredCertificates = this.certificates.filter(cert =>
             cert.name.toLowerCase().includes(query.toLowerCase()) ||
             cert.idNumber.includes(query) ||
             cert.certificateNumber.includes(query)
@@ -572,6 +651,82 @@ class AdminDashboard {
             console.error('Failed to copy link:', err);
             this.showError('فشل في نسخ الرابط');
         }
+    }
+
+    copyCertificateLink(certificateId) {
+        const baseUrl = window.location.origin;
+        const certificateUrl = `${baseUrl}/certificate.html?id=${certificateId}`;
+        
+        // Try modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(certificateUrl).then(() => {
+                this.showSuccess('تم نسخ رابط الشهادة بنجاح');
+            }).catch(err => {
+                console.error('Failed to copy link:', err);
+                this.fallbackCopyLink(certificateUrl);
+            });
+        } else {
+            this.fallbackCopyLink(certificateUrl);
+        }
+    }
+
+    fallbackCopyLink(url) {
+        // Create temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+        
+        try {
+            document.execCommand('copy');
+            this.showSuccess('تم نسخ رابط الشهادة بنجاح');
+        } catch (err) {
+            console.error('Failed to copy link:', err);
+            this.showError('فشل في نسخ الرابط');
+        }
+        
+        document.body.removeChild(tempInput);
+    }
+
+    async deleteCertificate(certificateId) {
+        if (!confirm('هل أنت متأكد من حذف هذه الشهادة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+            return;
+        }
+
+        this.showLoading();
+        
+        try {
+            // Delete from Firestore
+            await db.collection('certificates').doc(certificateId).delete();
+            console.log('✅ Certificate deleted from Firestore');
+            
+            // Remove from local array
+            this.certificates = this.certificates.filter(cert => 
+                cert.id !== certificateId && cert.certificateId !== certificateId
+            );
+            
+            // Update localStorage
+            localStorage.setItem('certificates', JSON.stringify(this.certificates));
+            
+            // Re-render table and update stats
+            this.renderCertificatesTable();
+            this.updateStatistics();
+            
+            this.showSuccess('تم حذف الشهادة بنجاح');
+            
+        } catch (error) {
+            console.error('❌ Error deleting certificate:', error);
+            this.showError('فشل في حذف الشهادة');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    viewCertificate(certificateId) {
+        const baseUrl = window.location.origin;
+        const certificateUrl = `${baseUrl}/certificate.html?id=${certificateId}`;
+        window.open(certificateUrl, '_blank');
     }
 }
 

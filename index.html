@@ -277,5 +277,13 @@
     <!-- Custom Scripts -->
     <script src="firebase-config.js"></script>
     <script src="admin.js"></script>
+    <script>
+        // Initialize AdminDashboard instance
+        document.addEventListener('DOMContentLoaded', function() {
+            window.admin = new AdminDashboard();
+            // Also set global reference for backward compatibility
+            window.adminDashboard = window.admin;
+        });
+    </script>
 </body>
 </html>

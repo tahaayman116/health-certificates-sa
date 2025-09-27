@@ -462,21 +462,19 @@ body {
 }
 
 .btn-copy {
-    background: #48bb78;
+    background: #17a2b8;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 5px;
     cursor: pointer;
-    font-weight: 600;
+    font-size: 14px;
+    margin: 0 2px;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .btn-copy:hover {
-    background: #38a169;
+    background: #138496;
     transform: translateY(-2px);
 }
 

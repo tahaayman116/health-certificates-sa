@@ -24,13 +24,8 @@ class CertificateViewer {
     }
 
     setupEventListeners() {
-        document.getElementById('printBtn').addEventListener('click', () => {
-            this.printCertificate();
-        });
-
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            this.downloadPDF();
-        });
+        // Event listeners will be added dynamically when buttons are created
+        // No need to set them up here since buttons don't exist yet
     }
 
     async loadCertificate() {
@@ -115,46 +110,87 @@ class CertificateViewer {
     displayCertificate() {
         const data = this.certificateData;
         
+        // Update header certificate number
+        const headerCertNumber = document.getElementById('headerCertNumber');
+        if (headerCertNumber) {
+            headerCertNumber.textContent = `رقم الشهادة: ${data.certificateNumber || '-'}`;
+        }
+        
         // Personal Information
-        document.getElementById('displayName').textContent = data.name || '-';
-        document.getElementById('displayIdNumber').textContent = data.idNumber || '-';
-        document.getElementById('displayGender').textContent = data.gender || '-';
-        document.getElementById('displayNationality').textContent = data.nationality || '-';
-        document.getElementById('displayProfession').textContent = data.profession || '-';
-        document.getElementById('displayAmanah').textContent = data.amanah || '-';
-        document.getElementById('displayMunicipality').textContent = data.municipality || '-';
+        const displayName = document.getElementById('displayName');
+        if (displayName) displayName.textContent = data.name || '-';
+        
+        const displayIdNumber = document.getElementById('displayIdNumber');
+        if (displayIdNumber) displayIdNumber.textContent = data.idNumber || '-';
+        
+        const displayBirthDate = document.getElementById('displayBirthDate');
+        if (displayBirthDate) displayBirthDate.textContent = data.birthDate || '-';
+        
+        const displayNationality = document.getElementById('displayNationality');
+        if (displayNationality) displayNationality.textContent = data.nationality || '-';
 
         // Photo
-        if (data.imageData) {
-            document.getElementById('displayPhoto').src = data.imageData;
-        } else if (data.imageUrl) {
-            document.getElementById('displayPhoto').src = data.imageUrl;
-        } else {
-            document.getElementById('displayPhoto').style.display = 'none';
+        const displayPhoto = document.getElementById('displayPhoto');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        
+        if (displayPhoto && photoPlaceholder) {
+            if (data.imageData) {
+                displayPhoto.src = data.imageData;
+                displayPhoto.classList.remove('photo-hidden');
+                photoPlaceholder.style.display = 'none';
+                console.log('✅ Photo loaded from imageData');
+            } else if (data.imageUrl) {
+                displayPhoto.src = data.imageUrl;
+                displayPhoto.classList.remove('photo-hidden');
+                photoPlaceholder.style.display = 'none';
+                console.log('✅ Photo loaded from imageUrl');
+            } else {
+                displayPhoto.classList.add('photo-hidden');
+                photoPlaceholder.style.display = 'flex';
+                console.log('❌ No photo data found');
+            }
         }
 
         // Certificate Information
-        document.getElementById('displayCertificateNumber').textContent = data.certificateNumber || '-';
-        document.getElementById('displayCertNumber').textContent = data.certificateNumber || '-';
-        document.getElementById('displayLicenseNumber').textContent = data.licenseNumber || '-';
-        document.getElementById('displayIssueDateHijri').textContent = data.issueDateHijri || '-';
-        document.getElementById('displayIssueDateGregorian').textContent = this.formatDate(data.issueDateGregorian) || '-';
-        document.getElementById('displayExpiryDateHijri').textContent = data.expiryDateHijri || '-';
-        document.getElementById('displayExpiryDateGregorian').textContent = this.formatDate(data.expiryDateGregorian) || '-';
+        const displayCertificateNumber = document.getElementById('displayCertificateNumber');
+        if (displayCertificateNumber) displayCertificateNumber.textContent = data.certificateNumber || '-';
+        
+        const displayHealthStatus = document.getElementById('displayHealthStatus');
+        if (displayHealthStatus) displayHealthStatus.textContent = data.healthStatus || '-';
+        
+        const displayIssueDateHijri = document.getElementById('displayIssueDateHijri');
+        if (displayIssueDateHijri) displayIssueDateHijri.textContent = data.issueDateHijri || '-';
+        
+        const displayIssueDateGregorian = document.getElementById('displayIssueDateGregorian');
+        if (displayIssueDateGregorian) displayIssueDateGregorian.textContent = this.formatDate(data.issueDateGregorian) || '-';
+        
+        const displayExpiryDateHijri = document.getElementById('displayExpiryDateHijri');
+        if (displayExpiryDateHijri) displayExpiryDateHijri.textContent = data.expiryDateHijri || '-';
+        
+        const displayExpiryDateGregorian = document.getElementById('displayExpiryDateGregorian');
+        if (displayExpiryDateGregorian) displayExpiryDateGregorian.textContent = this.formatDate(data.expiryDateGregorian) || '-';
 
         // Status
         const statusElement = document.getElementById('displayStatus');
-        const status = data.status || this.calculateStatus(data.expiryDateGregorian);
-        statusElement.textContent = this.getStatusText(status);
-        statusElement.className = `status-badge status-${status}`;
+        if (statusElement) {
+            const status = data.status || this.calculateStatus(data.expiryDateGregorian);
+            statusElement.textContent = this.getStatusText(status);
+            statusElement.className = `status-badge status-${status}`;
+        }
 
         // Educational Program
-        document.getElementById('displayProgramType').textContent = data.programType || '-';
-        document.getElementById('displayProgramExpiryDate').textContent = this.formatDate(data.programExpiryDate) || '-';
+        const displayProgramType = document.getElementById('displayProgramType');
+        if (displayProgramType) displayProgramType.textContent = data.programType || '-';
+        
+        const displayProgramExpiryDate = document.getElementById('displayProgramExpiryDate');
+        if (displayProgramExpiryDate) displayProgramExpiryDate.textContent = this.formatDate(data.programExpiryDate) || '-';
 
         // Establishment Information
-        document.getElementById('displayEstablishmentName').textContent = data.establishmentName || '-';
-        document.getElementById('displayEstablishmentNumber').textContent = data.establishmentNumber || '-';
+        const displayEstablishmentName = document.getElementById('displayEstablishmentName');
+        if (displayEstablishmentName) displayEstablishmentName.textContent = data.establishmentName || '-';
+        
+        const displayEstablishmentNumber = document.getElementById('displayEstablishmentNumber');
+        if (displayEstablishmentNumber) displayEstablishmentNumber.textContent = data.establishmentNumber || '-';
 
         // Created Date
         let createdDate;
@@ -173,11 +209,20 @@ class CertificateViewer {
         }
         
         try {
-            document.getElementById('displayCreatedDate').textContent = this.formatDate(createdDate.toISOString().split('T')[0]);
+            const displayCreatedDate = document.getElementById('displayCreatedDate');
+            if (displayCreatedDate) {
+                displayCreatedDate.textContent = this.formatDate(createdDate.toISOString().split('T')[0]);
+            }
         } catch (dateError) {
             console.error('Date formatting error:', dateError);
-            document.getElementById('displayCreatedDate').textContent = 'تاريخ غير صحيح';
+            const displayCreatedDate = document.getElementById('displayCreatedDate');
+            if (displayCreatedDate) {
+                displayCreatedDate.textContent = 'تاريخ غير صحيح';
+            }
         }
+
+        // Add action buttons to header after certificate is displayed
+        this.addActionButtons();
 
         // Show certificate display
         this.hideLoading();
@@ -231,71 +276,68 @@ class CertificateViewer {
 
         const certificateUrl = window.location.href;
         
-        // Create a simple QR-style visual representation
-        console.log('📱 Creating QR display');
+        // Use QRious library for real QR code generation
+        console.log('✅ Generating real QR code with QRious');
         
-        qrContainer.innerHTML = `
-            <div style="text-align: center; padding: 15px; border: 2px solid #007bff; border-radius: 8px; background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);">
-                <div style="display: inline-block; padding: 10px; background: white; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,123,255,0.1);">
-                    <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; width: 120px; height: 120px;">
-                        ${this.generateQRPattern()}
+        try {
+            if (typeof QRious !== 'undefined') {
+                // Create canvas element
+                const canvas = document.createElement('canvas');
+                qrContainer.innerHTML = '';
+                qrContainer.appendChild(canvas);
+                
+                // Generate QR code
+                const qr = new QRious({
+                    element: canvas,
+                    value: certificateUrl,
+                    size: 150,
+                    background: 'white',
+                    foreground: 'black',
+                    level: 'M'
+                });
+                
+                // Add styling to canvas
+                canvas.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
+                
+                console.log('✅ QR code generated successfully');
+            } else {
+                throw new Error('QRious library not loaded');
+            }
+        } catch (error) {
+            console.error('❌ QR generation failed:', error);
+            // Fallback to link display
+            qrContainer.innerHTML = `
+                <div style="text-align: center; padding: 15px; border: 2px solid #007bff; border-radius: 8px; background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);">
+                    <i class="fas fa-qrcode" style="font-size: 48px; color: #007bff; margin-bottom: 10px;"></i>
+                    <p style="color: #007bff; margin: 8px 0; font-size: 14px; font-weight: 600;">رمز التحقق</p>
+                    <div style="font-family: monospace; font-size: 10px; color: #666; word-break: break-all; margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.8); border-radius: 4px; border: 1px solid #e0e0e0;">
+                        ${certificateUrl.replace('http://localhost:3002/', '').substring(0, 40)}...
                     </div>
+                    <button onclick="navigator.clipboard.writeText('${certificateUrl}'); this.textContent='✅ تم النسخ!'; setTimeout(() => this.textContent='📋 نسخ الرابط', 2000)" 
+                            style="margin-top: 8px; padding: 8px 16px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s;" 
+                            onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                        📋 نسخ الرابط
+                    </button>
                 </div>
-                <p style="color: #007bff; margin: 8px 0; font-size: 14px; font-weight: 600;">رمز التحقق</p>
-                <div style="font-family: monospace; font-size: 10px; color: #666; word-break: break-all; margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.8); border-radius: 4px; border: 1px solid #e0e0e0;">
-                    ${certificateUrl.replace('http://localhost:3002/', '').substring(0, 40)}...
-                </div>
-                <button onclick="navigator.clipboard.writeText('${certificateUrl}'); this.textContent='✅ تم النسخ!'; setTimeout(() => this.textContent='📋 نسخ الرابط', 2000)" 
-                        style="margin-top: 8px; padding: 8px 16px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s;" 
-                        onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
-                    📋 نسخ الرابط
-                </button>
-                <div style="margin-top: 8px; font-size: 10px; color: #666;">
-                    استخدم هذا الرابط للتحقق من الشهادة
-                </div>
-            </div>
-        `;
-    }
-    
-    generateQRPattern() {
-        // Generate a simple QR-like pattern
-        const pattern = [
-            1,1,1,1,1,1,1,0,
-            1,0,0,0,0,0,1,1,
-            1,0,1,1,1,0,1,0,
-            1,0,1,1,1,0,1,1,
-            1,0,1,1,1,0,1,0,
-            1,0,0,0,0,0,1,1,
-            1,1,1,1,1,1,1,0,
-            0,1,0,1,0,1,0,1
-        ];
-        
-        return pattern.map(cell => 
-            `<div style="background: ${cell ? '#000' : '#fff'}; border-radius: 1px;"></div>`
-        ).join('');
+            `;
+        }
     }
 
-    printCertificate() {
-        // Hide action buttons for printing
+
+
+    addActionButtons() {
         const headerActions = document.querySelector('.header-actions');
-        headerActions.style.display = 'none';
-        
-        // Print
-        window.print();
-        
-        // Show action buttons again
-        setTimeout(() => {
-            headerActions.style.display = 'flex';
-        }, 1000);
-    }
-
-    downloadPDF() {
-        // For now, use print functionality
-        // In a production environment, you might want to use a library like jsPDF
-        this.printCertificate();
-        
-        // Show a message about PDF download
-        this.showMessage('يمكنك حفظ الصفحة كـ PDF من خيارات الطباعة في المتصفح');
+        if (headerActions && !headerActions.querySelector('.btn')) {
+            headerActions.innerHTML = `
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="certificateViewer.copyLink()" 
+                            style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                        📋 نسخ الرابط
+                    </button>
+                </div>
+            `;
+        }
     }
 
     showMessage(message) {
