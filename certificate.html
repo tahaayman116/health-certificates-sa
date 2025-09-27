@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الشهادة الصحية</title>
+    <link rel="stylesheet" href="certificate-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="logo-text">
+                        <h1>الشهادة الصحية</h1>
+                        <p>المملكة العربية السعودية</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="printBtn" class="btn-print">
+                        <i class="fas fa-print"></i> طباعة
+                    </button>
+                    <button id="downloadBtn" class="btn-download">
+                        <i class="fas fa-download"></i> تحميل PDF
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Certificate Content -->
+        <main class="certificate-content" id="certificateContent">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل الشهادة...</p>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error-state hidden">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>الشهادة غير موجودة</h2>
+                    <p>عذراً، لم يتم العثور على الشهادة المطلوبة أو أن الرابط غير صحيح.</p>
+                </div>
+            </div>
+
+            <!-- Certificate Display -->
+            <div id="certificateDisplay" class="certificate-display hidden">
+                <!-- Certificate Header -->
+                <div class="certificate-header">
+                    <div class="certificate-title">
+                        <h1>شهادة صحية</h1>
+                        <p>Health Certificate</p>
+                    </div>
+                    <div class="certificate-number">
+                        <span>رقم الشهادة</span>
+                        <strong id="displayCertificateNumber">-</strong>
+                    </div>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <i class="fas fa-user"></i>
+                        <h2>المعلومات الشخصية</h2>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="photo-container">
+                            <img id="displayPhoto" src="" alt="الصورة الشخصية" class="personal-photo">
+                        </div>
+                        
+                        <div class="info-details">
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>الاسم الكامل</label>
+                                    <span id="displayName">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>رقم الهوية</label>
+                                    <span id="displayIdNumber">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>الجنس</label>
+                                    <span id="displayGender">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>الجنسية</label>
+                                    <span id="displayNationality">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>المهنة</label>
+                                    <span id="displayProfession">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>الأمانة</label>
+                                    <span id="displayAmanah">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-item full-width">
+                                    <label>البلدية</label>
+                                    <span id="displayMunicipality">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Certificate Information -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <i class="fas fa-certificate"></i>
+                        <h2>معلومات الشهادة الصحية</h2>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>رقم الشهادة الصحية</label>
+                                <span id="displayCertNumber">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>رقم الرخصة</label>
+                                <span id="displayLicenseNumber">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>تاريخ الإصدار (هجري)</label>
+                                <span id="displayIssueDateHijri">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>تاريخ الإصدار (ميلادي)</label>
+                                <span id="displayIssueDateGregorian">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>تاريخ الانتهاء (هجري)</label>
+                                <span id="displayExpiryDateHijri">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>تاريخ الانتهاء (ميلادي)</label>
+                                <span id="displayExpiryDateGregorian">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>حالة الشهادة</label>
+                                <span id="displayStatus" class="status-badge">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Educational Program Information -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h2>معلومات البرنامج التثقيفي</h2>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>نوع البرنامج التثقيفي</label>
+                                <span id="displayProgramType">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>تاريخ انتهاء البرنامج</label>
+                                <span id="displayProgramExpiryDate">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Establishment Information -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <i class="fas fa-building"></i>
+                        <h2>معلومات المنشأة</h2>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>اسم المنشأة</label>
+                                <span id="displayEstablishmentName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>رقم المنشأة</label>
+                                <span id="displayEstablishmentNumber">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Footer -->
+                <div class="certificate-footer">
+                    <div class="footer-content">
+                        <div class="qr-code">
+                            <div id="qrCode" class="qr-placeholder">
+                                <i class="fas fa-qrcode"></i>
+                                <span>رمز QR للتحقق</span>
+                            </div>
+                        </div>
+                        <div class="footer-info">
+                            <p><strong>تاريخ الإصدار:</strong> <span id="displayCreatedDate">-</span></p>
+                            <p><strong>للتحقق من صحة الشهادة:</strong> امسح رمز QR أو ادخل على الموقع الرسمي</p>
+                            <p class="disclaimer">هذه الشهادة صادرة إلكترونياً ولا تحتاج إلى ختم أو توقيع</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 نظام الشهادات الصحية - المملكة العربية السعودية</p>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- QR Code Library - Local fallback -->
+    <script>
+        // Simple QR Code generator using Google Charts API
+        window.generateQRCode = function(text, container) {
+            const size = 150;
+            const qrUrl = `https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encodeURIComponent(text)}&choe=UTF-8`;
+            container.innerHTML = `<img src="${qrUrl}" alt="QR Code" style="width: ${size}px; height: ${size}px; border: 1px solid #ddd; border-radius: 4px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none; text-align: center; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;">
+                <i class="fas fa-qrcode" style="font-size: 40px; color: #666; margin-bottom: 8px;"></i>
+                <p style="color: #666; margin: 5px 0; font-size: 12px;">رمز QR للتحقق</p>
+                <div style="font-family: monospace; font-size: 10px; color: #999; word-break: break-all; margin-top: 8px; padding: 5px; background: white; border-radius: 4px;">
+                    ${text.length > 50 ? text.substring(0, 50) + '...' : text}
+                </div>
+                <button onclick="navigator.clipboard.writeText('${text}'); this.textContent='تم النسخ!'" 
+                        style="margin-top: 8px; padding: 4px 8px; font-size: 10px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    نسخ الرابط
+                </button>
+            </div>`;
+        };
+    </script>
+    
+    <!-- Custom Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="certificate.js"></script>
+</body>
+</html>

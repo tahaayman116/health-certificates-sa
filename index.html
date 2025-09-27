@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدارة - الشهادات الصحية</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-shield-alt"></i> لوحة تحكم الشهادات الصحية</h1>
+                <div class="admin-info">
+                    <span id="adminName">مرحباً، المدير</span>
+                    <button id="logoutBtn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalCertificates">0</h3>
+                        <p>إجمالي الشهادات</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeCertificates">0</h3>
+                        <p>الشهادات النشطة</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="expiringSoon">0</h3>
+                        <p>تنتهي قريباً</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="addCertificateBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> إضافة شهادة جديدة
+                </button>
+                <button id="viewAllBtn" class="btn-secondary">
+                    <i class="fas fa-list"></i> عرض جميع الشهادات
+                </button>
+            </div>
+
+            <!-- Add Certificate Form -->
+            <div id="addCertificateForm" class="form-container hidden">
+                <div class="form-header">
+                    <h2><i class="fas fa-plus-circle"></i> إضافة شهادة صحية جديدة</h2>
+                    <button id="closeFormBtn" class="btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="certificateForm" class="certificate-form">
+                    <!-- Image Upload -->
+                    <div class="form-group full-width">
+                        <label for="photo">الصورة الشخصية</label>
+                        <div class="image-upload">
+                            <input type="file" id="photo" accept="image/*" required>
+                            <div class="upload-placeholder">
+                                <i class="fas fa-camera"></i>
+                                <span>اضغط لرفع الصورة</span>
+                            </div>
+                            <img id="imagePreview" class="image-preview hidden" alt="معاينة الصورة">
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3>المعلومات الشخصية</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">الاسم الكامل</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="idNumber">رقم الهوية</label>
+                                <input type="text" id="idNumber" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gender">الجنس</label>
+                                <select id="gender" required>
+                                    <option value="">اختر الجنس</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nationality">الجنسية</label>
+                                <input type="text" id="nationality" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profession">المهنة</label>
+                                <input type="text" id="profession" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="amanah">الأمانة</label>
+                                <input type="text" id="amanah" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="municipality">البلدية</label>
+                            <input type="text" id="municipality" required>
+                        </div>
+                    </div>
+
+                    <!-- Health Certificate Information -->
+                    <div class="form-section">
+                        <h3>معلومات الشهادة الصحية</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="certificateNumber">رقم الشهادة الصحية</label>
+                                <input type="text" id="certificateNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="licenseNumber">رقم الرخصة</label>
+                                <input type="text" id="licenseNumber" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="issueDateHijri">تاريخ الإصدار (هجري)</label>
+                                <input type="text" id="issueDateHijri" placeholder="مثال: 1445/03/15" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="issueDateGregorian">تاريخ الإصدار (ميلادي)</label>
+                                <input type="date" id="issueDateGregorian" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiryDateHijri">تاريخ الانتهاء (هجري)</label>
+                                <input type="text" id="expiryDateHijri" placeholder="مثال: 1446/03/15" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiryDateGregorian">تاريخ الانتهاء (ميلادي)</label>
+                                <input type="date" id="expiryDateGregorian" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Educational Program Information -->
+                    <div class="form-section">
+                        <h3>معلومات البرنامج التثقيفي</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="programType">نوع البرنامج التثقيفي</label>
+                                <select id="programType" required>
+                                    <option value="">اختر نوع البرنامج</option>
+                                    <option value="برنامج سلامة الغذاء">برنامج سلامة الغذاء</option>
+                                    <option value="برنامج النظافة الشخصية">برنامج النظافة الشخصية</option>
+                                    <option value="برنامج مكافحة العدوى">برنامج مكافحة العدوى</option>
+                                    <option value="برنامج شامل">برنامج شامل</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="programExpiryDate">تاريخ انتهاء البرنامج التثقيفي</label>
+                                <input type="date" id="programExpiryDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Establishment Information -->
+                    <div class="form-section">
+                        <h3>معلومات المنشأة</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="establishmentName">اسم المنشأة</label>
+                                <input type="text" id="establishmentName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="establishmentNumber">رقم المنشأة</label>
+                                <input type="text" id="establishmentNumber" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> حفظ الشهادة
+                        </button>
+                        <button type="button" id="cancelFormBtn" class="btn-secondary">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Certificates List -->
+            <div id="certificatesList" class="certificates-list hidden">
+                <div class="list-header">
+                    <h2><i class="fas fa-list"></i> جميع الشهادات</h2>
+                    <button id="closeListBtn" class="btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="البحث بالاسم أو رقم الهوية...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div id="certificatesTable" class="table-container">
+                    <!-- Certificates will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="message success hidden">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText">تم حفظ الشهادة بنجاح!</span>
+                <div class="link-container">
+                    <p>رابط الشهادة:</p>
+                    <div class="link-box">
+                        <input type="text" id="certificateLink" readonly>
+                        <button id="copyLinkBtn" class="btn-copy">
+                            <i class="fas fa-copy"></i> نسخ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="message error hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">حدث خطأ ما!</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>جاري المعالجة...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
