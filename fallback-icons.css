@@ -1,0 +1,38 @@
+/* Fallback CSS Icons for Font Awesome */
+.fas, .far, .fab {
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: none;
+}
+
+/* Common icons used in the application */
+.fa-shield-alt::before { content: "🛡️"; }
+.fa-sign-out-alt::before { content: "🚪"; }
+.fa-plus::before { content: "➕"; }
+.fa-list::before { content: "📋"; }
+.fa-times::before { content: "❌"; }
+.fa-save::before { content: "💾"; }
+.fa-spinner::before { content: "⏳"; }
+.fa-spin { animation: spin 1s linear infinite; }
+.fa-eye::before { content: "👁️"; }
+.fa-copy::before { content: "📋"; }
+.fa-trash::before { content: "🗑️"; }
+.fa-user::before { content: "👤"; }
+.fa-calendar::before { content: "📅"; }
+.fa-id-card::before { content: "🆔"; }
+.fa-phone::before { content: "📞"; }
+.fa-envelope::before { content: "✉️"; }
+.fa-map-marker-alt::before { content: "📍"; }
+.fa-graduation-cap::before { content: "🎓"; }
+.fa-certificate::before { content: "📜"; }
+.fa-qrcode::before { content: "⬛"; }
+.fa-print::before { content: "🖨️"; }
+.fa-download::before { content: "⬇️"; }
+.fa-link::before { content: "🔗"; }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

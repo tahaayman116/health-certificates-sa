@@ -7,16 +7,17 @@
 
 body {
     font-family: 'Cairo', sans-serif;
-    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     direction: rtl;
-    color: #333;
+    padding: 20px;
 }
 
+/* Hide main container initially until login */
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+    display: none;
 }
 
 /* Header Styles */
