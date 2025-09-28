@@ -196,6 +196,13 @@ class AdminDashboard {
                 createdBy: this.currentUser.uid,
                 status: this.getCertificateStatus(formData.expiryDateGregorian)
             };
+            
+            console.log('💾 Saving certificate data to Firebase:', certificateData);
+            console.log('👔 Profession:', formData.profession);
+            console.log('🏛️ Amanah:', formData.amanah);
+            console.log('🏢 Municipality:', formData.municipality);
+            console.log('👤 Gender:', formData.gender);
+            console.log('📄 License Number:', formData.licenseNumber);
 
             // Save to Firestore (using simple object storage for free tier)
             try {

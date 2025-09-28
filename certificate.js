@@ -117,6 +117,8 @@ class CertificateViewer {
         }
         
         // Personal Information
+        console.log('🔍 Certificate data received:', data);
+        
         const displayName = document.getElementById('displayName');
         if (displayName) displayName.textContent = data.name || '-';
         
@@ -127,19 +129,39 @@ class CertificateViewer {
         if (displayNationality) displayNationality.textContent = data.nationality || '-';
         
         const displayProfession = document.getElementById('displayProfession');
-        if (displayProfession) displayProfession.textContent = data.profession || '-';
+        if (displayProfession) {
+            const professionValue = data.profession || data.job || 'غير محدد';
+            console.log('👔 Profession data:', professionValue);
+            displayProfession.textContent = professionValue;
+        }
         
         const displayAmanah = document.getElementById('displayAmanah');
-        if (displayAmanah) displayAmanah.textContent = data.amanah || '-';
+        if (displayAmanah) {
+            const amanahValue = data.amanah || 'غير محدد';
+            console.log('🏛️ Amanah data:', amanahValue);
+            displayAmanah.textContent = amanahValue;
+        }
         
         const displayMunicipality = document.getElementById('displayMunicipality');
-        if (displayMunicipality) displayMunicipality.textContent = data.municipality || '-';
+        if (displayMunicipality) {
+            const municipalityValue = data.municipality || 'غير محدد';
+            console.log('🏢 Municipality data:', municipalityValue);
+            displayMunicipality.textContent = municipalityValue;
+        }
         
         const displayGender = document.getElementById('displayGender');
-        if (displayGender) displayGender.textContent = data.gender || '-';
+        if (displayGender) {
+            const genderValue = data.gender || data.sex || 'غير محدد';
+            console.log('👤 Gender data:', genderValue);
+            displayGender.textContent = genderValue;
+        }
         
         const displayLicenseNumber = document.getElementById('displayLicenseNumber');
-        if (displayLicenseNumber) displayLicenseNumber.textContent = data.licenseNumber || '-';
+        if (displayLicenseNumber) {
+            const licenseValue = data.licenseNumber || data.license || 'غير محدد';
+            console.log('📄 License Number data:', licenseValue);
+            displayLicenseNumber.textContent = licenseValue;
+        }
 
         // Photo
         const displayPhoto = document.getElementById('displayPhoto');
