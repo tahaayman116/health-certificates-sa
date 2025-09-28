@@ -270,7 +270,7 @@ class CertificateViewer {
         }
     }
 
-    generateQRCode() {
+    async generateQRCode() {
         const qrContainer = document.getElementById('qrCode');
         if (!qrContainer) return;
 
@@ -280,7 +280,20 @@ class CertificateViewer {
         console.log('✅ Generating real QR code with QRious');
         
         try {
-            if (typeof QRious !== 'undefined') {
+            // Wait for QRious library to load
+            let attempts = 0;
+            const waitForQRious = async () => {
+                while (attempts < 30 && typeof QRious === 'undefined') {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                return typeof QRious !== 'undefined';
+            };
+            
+            const qrLibLoaded = await waitForQRious();
+            
+            if (qrLibLoaded) {
+                console.log('✅ QRious library loaded successfully');
                 // Create canvas element
                 const canvas = document.createElement('canvas');
                 qrContainer.innerHTML = '';
@@ -298,28 +311,18 @@ class CertificateViewer {
                 
                 // Add styling to canvas
                 canvas.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
-                
                 console.log('✅ QR code generated successfully');
             } else {
                 throw new Error('QRious library not loaded');
             }
         } catch (error) {
-            console.error('❌ QR generation failed:', error);
-            // Fallback to link display
-            qrContainer.innerHTML = `
-                <div style="text-align: center; padding: 15px; border: 2px solid #007bff; border-radius: 8px; background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);">
-                    <i class="fas fa-qrcode" style="font-size: 48px; color: #007bff; margin-bottom: 10px;"></i>
-                    <p style="color: #007bff; margin: 8px 0; font-size: 14px; font-weight: 600;">رمز التحقق</p>
-                    <div style="font-family: monospace; font-size: 10px; color: #666; word-break: break-all; margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.8); border-radius: 4px; border: 1px solid #e0e0e0;">
-                        ${certificateUrl.replace('http://localhost:3002/', '').substring(0, 40)}...
-                    </div>
-                    <button onclick="navigator.clipboard.writeText('${certificateUrl}'); this.textContent='✅ تم النسخ!'; setTimeout(() => this.textContent='📋 نسخ الرابط', 2000)" 
-                            style="margin-top: 8px; padding: 8px 16px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s;" 
-                            onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
-                        📋 نسخ الرابط
-                    </button>
-                </div>
-            `;
+            console.error('❌ QR code generation failed:', error);
+            if (typeof QRious === 'undefined') {
+                console.warn('⚠️ QRious library not loaded, showing fallback');
+                this.showQRFallback(qrContainer, certificateUrl);
+            } else {
+                this.showQRFallback(qrContainer, certificateUrl);
+            }
         }
     }
 

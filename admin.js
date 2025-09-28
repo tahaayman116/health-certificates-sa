@@ -63,12 +63,32 @@ class AdminDashboard {
     }
 
     checkAuthState() {
-        // Simple check - show login if no current user
-        if (!this.currentUser) {
+        // Simple hardcoded authentication for demo
+        const isLoggedIn = localStorage.getItem('adminLoggedIn');
+        if (!isLoggedIn) {
             this.showLogin();
         } else {
-            this.loadCertificates();
+            this.currentUser = { uid: 'admin', email: 'admin@system.local' };
+            document.getElementById('adminName').textContent = 'مرحباً، المدير';
+            // Ensure Firebase is initialized before loading certificates
+            this.waitForFirebase().then(() => {
+                this.loadCertificates();
+            });
         }
+    }
+    
+    async waitForFirebase() {
+        // Wait for Firebase to be fully loaded
+        let attempts = 0;
+        while (attempts < 50) {
+            if (window.firebase && window.firebase.firestore) {
+                return true;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        console.warn('Firebase took too long to load');
+        return false;
     }
 
     showLogin() {
@@ -101,7 +121,6 @@ class AdminDashboard {
             </div>
         `;
         
-        document.body.appendChild(loginForm);
         
         loginForm.querySelector('.admin-login-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -112,8 +131,11 @@ class AdminDashboard {
                 // Simulate successful login
                 this.currentUser = { uid: 'admin', email: 'admin@system.local' };
                 document.getElementById('adminName').textContent = 'مرحباً، المدير';
+                localStorage.setItem('adminLoggedIn', 'true');
                 document.body.removeChild(loginForm);
-                this.loadCertificates();
+                this.waitForFirebase().then(() => {
+                    this.loadCertificates();
+                });
             } else {
                 const errorDiv = loginForm.querySelector('.login-error');
                 errorDiv.style.display = 'block';
