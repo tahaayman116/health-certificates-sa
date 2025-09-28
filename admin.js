@@ -7,8 +7,9 @@ class AdminDashboard {
     }
 
     init() {
-        // Show login form immediately on page load
-        this.showLogin();
+        this.setupEventListeners();
+        this.checkAuthState();
+        this.loadCertificates();
     }
 
     setupEventListeners() {
@@ -99,6 +100,7 @@ class AdminDashboard {
                 </div>
             </div>
         `;
+        
         document.body.appendChild(loginForm);
         
         loginForm.querySelector('.admin-login-form').addEventListener('submit', (e) => {
@@ -107,17 +109,11 @@ class AdminDashboard {
             const password = loginForm.querySelector('.admin-password').value;
             
             if (username === 'admin' && password === 'taha2025') {
-                // Successful login
+                // Simulate successful login
                 this.currentUser = { uid: 'admin', email: 'admin@system.local' };
                 document.getElementById('adminName').textContent = 'مرحباً، المدير';
                 document.body.removeChild(loginForm);
-                
-                // Setup event listeners after login
-                this.setupEventListeners();
                 this.loadCertificates();
-                
-                // Show the main dashboard
-                document.querySelector('.container').style.display = 'block';
             } else {
                 const errorDiv = loginForm.querySelector('.login-error');
                 errorDiv.style.display = 'block';
