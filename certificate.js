@@ -276,62 +276,18 @@ class CertificateViewer {
 
         const certificateUrl = window.location.href;
         
-        // Use QRCode library for real QR code generation
-        console.log('✅ Generating real QR code with QRCode.js');
+        console.log('✅ Generating QR code for:', certificateUrl);
         
-        try {
-            // Wait for QRCode library to load
-            let attempts = 0;
-            const waitForQRCode = async () => {
-                while (attempts < 30 && typeof QRCode === 'undefined') {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    attempts++;
-                }
-                return typeof QRCode !== 'undefined';
-            };
-            
-            const qrLibLoaded = await waitForQRCode();
-            
-            if (qrLibLoaded) {
-                console.log('✅ QRCode library loaded successfully');
-                // Clear container
-                qrContainer.innerHTML = '';
-                
-                // Create canvas for QR code
-                const canvas = document.createElement('canvas');
-                qrContainer.appendChild(canvas);
-                
-                // Generate QR code using QRCode.js
-                QRCode.toCanvas(canvas, certificateUrl, {
-                    width: 150,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
-                    }
-                }, function (error) {
-                    if (error) {
-                        console.error('QR Code generation error:', error);
-                        this.showQRFallback(qrContainer, certificateUrl);
-                    } else {
-                        console.log('✅ QR code generated successfully');
-                        // Add styling to canvas
-                        canvas.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
-                    }
-                }.bind(this));
-            } else {
-                console.warn('⚠️ QRCode library not loaded, trying Google API backup...');
-                this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
-            }
-        } catch (error) {
-            console.error('❌ QR code generation failed:', error);
-            this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
-        }
+        // Try Google Charts API first (most reliable)
+        this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
     }
 
-    // Alternative QR generation using Google Charts API
+    // QR generation using Google Charts API (most reliable)
     generateQRWithGoogleAPI(container, url) {
-        console.log('🔄 Trying Google Charts QR API as backup...');
+        console.log('🔄 Using Google Charts QR API...');
+        
+        // Clear container first
+        container.innerHTML = '<div style="text-align: center; padding: 10px;">جاري تحميل رمز QR...</div>';
         
         const qrImg = document.createElement('img');
         const encodedUrl = encodeURIComponent(url);
@@ -349,6 +305,14 @@ class CertificateViewer {
             console.warn('⚠️ Google Charts QR failed, showing fallback');
             this.showQRFallback(container, url);
         }.bind(this);
+        
+        // Add timeout fallback
+        setTimeout(() => {
+            if (container.innerHTML.includes('جاري تحميل')) {
+                console.warn('⚠️ QR loading timeout, showing fallback');
+                this.showQRFallback(container, url);
+            }
+        }.bind(this), 5000);
     }
     
     showQRFallback(container, url) {
