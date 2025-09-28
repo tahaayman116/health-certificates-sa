@@ -172,19 +172,12 @@
                         </div>
                     </div>
 
-                    <!-- Educational Program Information -->
                     <div class="form-section">
                         <h3>معلومات البرنامج التثقيفي</h3>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="programType">نوع البرنامج التثقيفي</label>
-                                <select id="programType" required>
-                                    <option value="">اختر نوع البرنامج</option>
-                                    <option value="برنامج سلامة الغذاء">برنامج سلامة الغذاء</option>
-                                    <option value="برنامج النظافة الشخصية">برنامج النظافة الشخصية</option>
-                                    <option value="برنامج مكافحة العدوى">برنامج مكافحة العدوى</option>
-                                    <option value="برنامج شامل">برنامج شامل</option>
-                                </select>
+                                <input type="text" id="programType" placeholder="اكتب نوع البرنامج التثقيفي" required>
                             </div>
                             <div class="form-group">
                                 <label for="programExpiryDate">تاريخ انتهاء البرنامج التثقيفي</label>
@@ -192,7 +185,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Establishment Information -->
                     <div class="form-section">
                         <h3>معلومات المنشأة</h3>
@@ -267,6 +259,11 @@
             <p>جاري المعالجة...</p>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; Developed by Taha Ayman (+201103795882)</p>
+    </footer>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>

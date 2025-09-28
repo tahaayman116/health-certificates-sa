@@ -490,20 +490,15 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    backdrop-filter: blur(5px);
 }
 
 .loading-spinner {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .loading-spinner i {
     font-size: 3rem;
-    color: #667eea;
     margin-bottom: 20px;
 }
 
@@ -518,6 +513,32 @@ body {
     display: none !important;
 }
 
+/* Footer Styles */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 20px;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.85rem;
+    color: #666;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.footer p {
+    margin: 0;
+}
+
+/* Add bottom padding to body to account for fixed footer */
+body {
+    padding-bottom: 60px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -530,46 +551,51 @@ body {
         text-align: center;
     }
     
-    .header h1 {
-        font-size: 1.5rem;
+    .admin-info {
+        flex-direction: column;
+        gap: 10px;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
     
-    .stat-card {
-        padding: 20px;
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .certificates-table {
+        font-size: 0.9rem;
+    }
+    
+    .certificates-table th,
+    .certificates-table td {
+        padding: 8px 4px;
     }
     
     .action-buttons {
         flex-direction: column;
+        gap: 5px;
     }
     
-    .btn-primary, .btn-secondary {
-        min-width: auto;
-        width: 100%;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .certificate-form {
-        padding: 25px;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .link-box {
-        flex-direction: column;
-    }
-    
-    .link-box input {
-        width: 100%;
+    .action-buttons .btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
     }
 }
 
