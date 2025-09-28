@@ -123,11 +123,23 @@ class CertificateViewer {
         const displayIdNumber = document.getElementById('displayIdNumber');
         if (displayIdNumber) displayIdNumber.textContent = data.idNumber || '-';
         
-        const displayBirthDate = document.getElementById('displayBirthDate');
-        if (displayBirthDate) displayBirthDate.textContent = data.birthDate || '-';
-        
         const displayNationality = document.getElementById('displayNationality');
         if (displayNationality) displayNationality.textContent = data.nationality || '-';
+        
+        const displayProfession = document.getElementById('displayProfession');
+        if (displayProfession) displayProfession.textContent = data.profession || '-';
+        
+        const displayAmanah = document.getElementById('displayAmanah');
+        if (displayAmanah) displayAmanah.textContent = data.amanah || '-';
+        
+        const displayMunicipality = document.getElementById('displayMunicipality');
+        if (displayMunicipality) displayMunicipality.textContent = data.municipality || '-';
+        
+        const displayGender = document.getElementById('displayGender');
+        if (displayGender) displayGender.textContent = data.gender || '-';
+        
+        const displayLicenseNumber = document.getElementById('displayLicenseNumber');
+        if (displayLicenseNumber) displayLicenseNumber.textContent = data.licenseNumber || '-';
 
         // Photo
         const displayPhoto = document.getElementById('displayPhoto');
@@ -155,8 +167,6 @@ class CertificateViewer {
         const displayCertificateNumber = document.getElementById('displayCertificateNumber');
         if (displayCertificateNumber) displayCertificateNumber.textContent = data.certificateNumber || '-';
         
-        const displayHealthStatus = document.getElementById('displayHealthStatus');
-        if (displayHealthStatus) displayHealthStatus.textContent = data.healthStatus || '-';
         
         const displayIssueDateHijri = document.getElementById('displayIssueDateHijri');
         if (displayIssueDateHijri) displayIssueDateHijri.textContent = data.issueDateHijri || '-';

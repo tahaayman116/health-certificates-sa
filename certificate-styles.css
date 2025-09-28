@@ -849,8 +849,138 @@ body {
     }
 }
 
-/* Loading and Error States Responsive */
+/* Enhanced Mobile Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        margin: 0;
+    }
+    
+    .header {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .certificate-title {
+        font-size: 1.5rem;
+    }
+    
+    .certificate-number {
+        font-size: 0.9rem;
+    }
+    
+    .certificate-content {
+        padding: 15px;
+    }
+    
+    .main-content {
+        gap: 15px;
+    }
+    
+    .personal-info-card,
+    .health-info-card,
+    .program-info-card,
+    .establishment-info-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .info-grid {
+        gap: 10px;
+    }
+    
+    .info-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .info-item {
+        padding: 8px 0;
+    }
+    
+    .info-item label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+    
+    .info-value {
+        font-size: 0.9rem;
+        padding: 6px 8px;
+    }
+    
+    .certificate-footer {
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .qr-code {
+        order: 2;
+    }
+    
+    .footer-info {
+        order: 1;
+        text-align: center;
+    }
+    
+    .footer-info p {
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+    }
+}
+
 @media (max-width: 576px) {
+    .container {
+        padding: 5px;
+    }
+    
+    .header {
+        padding: 10px;
+    }
+    
+    .certificate-title {
+        font-size: 1.3rem;
+    }
+    
+    .certificate-content {
+        padding: 10px;
+    }
+    
+    .personal-info-card,
+    .health-info-card,
+    .program-info-card,
+    .establishment-info-card {
+        padding: 12px;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+    }
+    
+    .info-item label {
+        font-size: 0.8rem;
+    }
+    
+    .info-value {
+        font-size: 0.85rem;
+        padding: 4px 6px;
+    }
+    
+    .photo-container {
+        width: 80px;
+        height: 80px;
+    }
+    
     .loading-state, .error-state {
         padding: 40px 20px;
     }
@@ -869,6 +999,108 @@ body {
     
     .error-content p {
         font-size: 0.9rem;
+    }
+    
+    .footer-info p {
+        font-size: 0.75rem;
+    }
+    
+    /* Better QR code sizing on mobile */
+    .qr-code {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .qr-placeholder {
+        width: 80px;
+        height: 80px;
+        font-size: 0.7rem;
+    }
+    
+    .qr-placeholder i {
+        font-size: 1.2rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .certificate-title {
+        font-size: 1.1rem;
+    }
+    
+    .section-title {
+        font-size: 0.9rem;
+    }
+    
+    .info-item label {
+        font-size: 0.75rem;
+    }
+    
+    .info-value {
+        font-size: 0.8rem;
+    }
+    
+    .photo-container {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .qr-placeholder {
+        width: 60px;
+        height: 60px;
+        font-size: 0.6rem;
+    }
+    
+    .qr-placeholder i {
+        font-size: 1rem;
+    }
+}
+
+/* Footer Styles for Certificate Page */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 15px;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.8rem;
+    color: #666;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.footer p {
+    margin: 0;
+}
+
+/* Add bottom padding to body to account for fixed footer */
+body {
+    padding-bottom: 50px;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+    
+    body {
+        padding-bottom: 45px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+    }
+    
+    body {
+        padding-bottom: 40px;
     }
 }
 
