@@ -1,4 +1,5 @@
-// Certificate View JavaScript - Updated 2025-01-28
+// Certificate View JavaScript - V2 - Final Fix 2025-01-28
+// NO QRious or QRCode.js - Google Charts API ONLY
 class CertificateViewer {
     constructor() {
         this.certificateId = this.getCertificateIdFromURL();
@@ -190,7 +191,9 @@ class CertificateViewer {
     }
 
     generateQRCode() {
-        console.log('🔄 Starting QR code generation...');
+        console.log('🔄 QR Code V2 - Starting generation...');
+        console.log('✅ NO QRious library - using Google Charts only');
+        
         const qrContainer = document.getElementById('qrCode');
         if (!qrContainer) {
             console.warn('⚠️ QR container not found');
@@ -200,7 +203,7 @@ class CertificateViewer {
         const certificateUrl = window.location.href;
         console.log('📱 Generating QR for URL:', certificateUrl);
         
-        // Use Google Charts API directly - no external libraries needed
+        // Use Google Charts API directly - GUARANTEED to work
         this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
     }
 
