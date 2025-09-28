@@ -276,53 +276,56 @@ class CertificateViewer {
 
         const certificateUrl = window.location.href;
         
-        // Use QRious library for real QR code generation
-        console.log('✅ Generating real QR code with QRious');
+        // Use QRCode library for real QR code generation
+        console.log('✅ Generating real QR code with QRCode.js');
         
         try {
-            // Wait for QRious library to load
+            // Wait for QRCode library to load
             let attempts = 0;
-            const waitForQRious = async () => {
-                while (attempts < 30 && typeof QRious === 'undefined') {
+            const waitForQRCode = async () => {
+                while (attempts < 30 && typeof QRCode === 'undefined') {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     attempts++;
                 }
-                return typeof QRious !== 'undefined';
+                return typeof QRCode !== 'undefined';
             };
             
-            const qrLibLoaded = await waitForQRious();
+            const qrLibLoaded = await waitForQRCode();
             
             if (qrLibLoaded) {
-                console.log('✅ QRious library loaded successfully');
-                // Create canvas element
-                const canvas = document.createElement('canvas');
+                console.log('✅ QRCode library loaded successfully');
+                // Clear container
                 qrContainer.innerHTML = '';
+                
+                // Create canvas for QR code
+                const canvas = document.createElement('canvas');
                 qrContainer.appendChild(canvas);
                 
-                // Generate QR code
-                const qr = new QRious({
-                    element: canvas,
-                    value: certificateUrl,
-                    size: 150,
-                    background: 'white',
-                    foreground: 'black',
-                    level: 'M'
-                });
-                
-                // Add styling to canvas
-                canvas.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
-                console.log('✅ QR code generated successfully');
+                // Generate QR code using QRCode.js
+                QRCode.toCanvas(canvas, certificateUrl, {
+                    width: 150,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                }, function (error) {
+                    if (error) {
+                        console.error('QR Code generation error:', error);
+                        this.showQRFallback(qrContainer, certificateUrl);
+                    } else {
+                        console.log('✅ QR code generated successfully');
+                        // Add styling to canvas
+                        canvas.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
+                    }
+                }.bind(this));
             } else {
-                throw new Error('QRious library not loaded');
+                console.warn('⚠️ QRCode library not loaded, showing fallback');
+                this.showQRFallback(qrContainer, certificateUrl);
             }
         } catch (error) {
             console.error('❌ QR code generation failed:', error);
-            if (typeof QRious === 'undefined') {
-                console.warn('⚠️ QRious library not loaded, showing fallback');
-                this.showQRFallback(qrContainer, certificateUrl);
-            } else {
-                this.showQRFallback(qrContainer, certificateUrl);
-            }
+            this.showQRFallback(qrContainer, certificateUrl);
         }
     }
 

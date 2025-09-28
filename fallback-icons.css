@@ -1,0 +1,98 @@
+/* Fallback Icons using Unicode characters */
+.fas.fa-shield-alt::before,
+.fa-shield-alt::before {
+    content: "🛡️";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-certificate::before,
+.fa-certificate::before {
+    content: "📜";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-clock::before,
+.fa-clock::before {
+    content: "🕐";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-exclamation-triangle::before,
+.fa-exclamation-triangle::before {
+    content: "⚠️";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-plus::before,
+.fa-plus::before {
+    content: "➕";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-list::before,
+.fa-list::before {
+    content: "📋";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-search::before,
+.fa-search::before {
+    content: "🔍";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-sign-out-alt::before,
+.fa-sign-out-alt::before {
+    content: "🚪";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-times::before,
+.fa-times::before {
+    content: "❌";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-save::before,
+.fa-save::before {
+    content: "💾";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-spinner::before,
+.fa-spinner::before {
+    content: "⏳";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-eye::before,
+.fa-eye::before {
+    content: "👁️";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-copy::before,
+.fa-copy::before {
+    content: "📋";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.fas.fa-trash::before,
+.fa-trash::before {
+    content: "🗑️";
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+/* Spinning animation for spinner */
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
