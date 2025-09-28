@@ -1,4 +1,4 @@
-// Certificate View JavaScript
+// Certificate View JavaScript - Updated 2025-01-28
 class CertificateViewer {
     constructor() {
         this.certificateId = this.getCertificateIdFromURL();
@@ -48,205 +48,124 @@ class CertificateViewer {
                     console.log('❌ Document does not exist with direct lookup');
                 }
             } catch (firestoreError) {
-                console.error('❌ Firestore direct lookup error:', firestoreError);
-            }
-            
-            // Fallback: search all documents
-            if (!certificateFound) {
-                console.log('🔍 Searching all documents in collection...');
-                try {
-                    const allDocs = await db.collection('certificates').get();
-                    console.log('📊 Total documents found:', allDocs.size);
-                    
-                    allDocs.forEach((doc) => {
-                        const data = doc.data();
-                        console.log('🔍 Checking document:', doc.id, 'with certificateId:', data.certificateId);
-                        
-                        if (data.certificateId === this.certificateId || doc.id === this.certificateId) {
-                            this.certificateData = data;
-                            certificateFound = true;
-                            console.log('✅ Certificate found by searching! Document ID:', doc.id, 'Certificate ID:', data.certificateId);
-                        }
-                    });
-                } catch (searchError) {
-                    console.error('❌ Error searching certificates:', searchError);
-                }
-            }
-                
-            // Still not found? Try localStorage
-            if (!certificateFound) {
-                console.log('💾 Trying localStorage...');
-                const localCerts = JSON.parse(localStorage.getItem('certificates') || '[]');
-                console.log('💾 LocalStorage certificates:', localCerts.length);
-                
-                const foundCert = localCerts.find(cert => {
-                    console.log('🔍 Checking local cert:', cert.certificateId || cert.id);
-                    return cert.certificateId === this.certificateId || cert.id === this.certificateId;
-                });
-                
-                if (foundCert) {
-                    this.certificateData = foundCert;
-                    certificateFound = true;
-                    console.log('✅ Certificate loaded from localStorage:', foundCert);
-                }
-            }
-            
-            if (!certificateFound) {
-                console.error('❌ Certificate not found anywhere! ID:', this.certificateId);
-                this.showError();
-                return;
+                console.warn('⚠️ Direct Firestore lookup failed:', firestoreError);
             }
 
-            console.log('🎉 Certificate loaded successfully:', this.certificateData);
-            this.displayCertificate();
-            this.generateQRCode();
+            // Fallback: Try to get from localStorage
+            if (!certificateFound) {
+                console.log('🔄 Trying localStorage fallback...');
+                const localCertificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+                const localCert = localCertificates.find(cert => cert.id === this.certificateId);
+                
+                if (localCert) {
+                    this.certificateData = localCert;
+                    certificateFound = true;
+                    console.log('✅ Certificate loaded from localStorage:', this.certificateData);
+                } else {
+                    console.log('❌ Certificate not found in localStorage either');
+                }
+            }
+
+            if (certificateFound) {
+                this.displayCertificate();
+                this.generateQRCode();
+                this.addActionButtons();
+            } else {
+                console.error('❌ Certificate not found anywhere');
+                this.showError();
+            }
 
         } catch (error) {
-            console.error('💥 Fatal error loading certificate:', error);
+            console.error('❌ Error loading certificate:', error);
             this.showError();
         }
     }
 
     displayCertificate() {
-        const data = this.certificateData;
+        console.log('📄 Displaying certificate data...');
+        this.hideLoading();
         
+        const certificateDisplay = document.getElementById('certificateDisplay');
+        certificateDisplay.classList.remove('hidden');
+
         // Update header certificate number
         const headerCertNumber = document.getElementById('headerCertNumber');
         if (headerCertNumber) {
-            headerCertNumber.textContent = `رقم الشهادة: ${data.certificateNumber || '-'}`;
-        }
-        
-        // Personal Information
-        const displayName = document.getElementById('displayName');
-        if (displayName) displayName.textContent = data.name || '-';
-        
-        const displayIdNumber = document.getElementById('displayIdNumber');
-        if (displayIdNumber) displayIdNumber.textContent = data.idNumber || '-';
-        
-        const displayBirthDate = document.getElementById('displayBirthDate');
-        if (displayBirthDate) displayBirthDate.textContent = data.birthDate || '-';
-        
-        const displayNationality = document.getElementById('displayNationality');
-        if (displayNationality) displayNationality.textContent = data.nationality || '-';
-
-        // Photo
-        const displayPhoto = document.getElementById('displayPhoto');
-        const photoPlaceholder = document.getElementById('photoPlaceholder');
-        
-        if (displayPhoto && photoPlaceholder) {
-            if (data.imageData) {
-                displayPhoto.src = data.imageData;
-                displayPhoto.classList.remove('photo-hidden');
-                photoPlaceholder.style.display = 'none';
-                console.log('✅ Photo loaded from imageData');
-            } else if (data.imageUrl) {
-                displayPhoto.src = data.imageUrl;
-                displayPhoto.classList.remove('photo-hidden');
-                photoPlaceholder.style.display = 'none';
-                console.log('✅ Photo loaded from imageUrl');
-            } else {
-                displayPhoto.classList.add('photo-hidden');
-                photoPlaceholder.style.display = 'flex';
-                console.log('❌ No photo data found');
-            }
+            headerCertNumber.textContent = `رقم الشهادة: ${this.certificateData.certificateNumber || this.certificateId}`;
         }
 
-        // Certificate Information
-        const displayCertificateNumber = document.getElementById('displayCertificateNumber');
-        if (displayCertificateNumber) displayCertificateNumber.textContent = data.certificateNumber || '-';
-        
-        const displayHealthStatus = document.getElementById('displayHealthStatus');
-        if (displayHealthStatus) displayHealthStatus.textContent = data.healthStatus || '-';
-        
-        const displayIssueDateHijri = document.getElementById('displayIssueDateHijri');
-        if (displayIssueDateHijri) displayIssueDateHijri.textContent = data.issueDateHijri || '-';
-        
-        const displayIssueDateGregorian = document.getElementById('displayIssueDateGregorian');
-        if (displayIssueDateGregorian) displayIssueDateGregorian.textContent = this.formatDate(data.issueDateGregorian) || '-';
-        
-        const displayExpiryDateHijri = document.getElementById('displayExpiryDateHijri');
-        if (displayExpiryDateHijri) displayExpiryDateHijri.textContent = data.expiryDateHijri || '-';
-        
-        const displayExpiryDateGregorian = document.getElementById('displayExpiryDateGregorian');
-        if (displayExpiryDateGregorian) displayExpiryDateGregorian.textContent = this.formatDate(data.expiryDateGregorian) || '-';
+        // Update all certificate fields safely
+        this.updateFieldSafely('certNumber', this.certificateData.certificateNumber || this.certificateId);
+        this.updateFieldSafely('fullName', this.certificateData.name);
+        this.updateFieldSafely('nationalId', this.certificateData.nationalId);
+        this.updateFieldSafely('nationality', this.certificateData.nationality);
+        this.updateFieldSafely('birthDate', this.formatDate(this.certificateData.birthDate));
+        this.updateFieldSafely('gender', this.certificateData.gender);
+        this.updateFieldSafely('passportNumber', this.certificateData.passportNumber);
+        this.updateFieldSafely('phoneNumber', this.certificateData.phoneNumber);
+        this.updateFieldSafely('email', this.certificateData.email);
+        this.updateFieldSafely('address', this.certificateData.address);
+        this.updateFieldSafely('profession', this.certificateData.profession);
+        this.updateFieldSafely('workplace', this.certificateData.workplace);
+        this.updateFieldSafely('certificateType', this.certificateData.certificateType);
+        this.updateFieldSafely('healthStatus', this.certificateData.healthStatus);
+        this.updateFieldSafely('medicalTests', this.certificateData.medicalTests);
+        this.updateFieldSafely('vaccinations', this.certificateData.vaccinations);
+        this.updateFieldSafely('issueDate', this.formatDate(this.certificateData.issueDate));
+        this.updateFieldSafely('expiryDate', this.formatDate(this.certificateData.expiryDate));
+        this.updateFieldSafely('issuingAuthority', this.certificateData.issuingAuthority);
+        this.updateFieldSafely('doctorName', this.certificateData.doctorName);
+        this.updateFieldSafely('notes', this.certificateData.notes);
 
-        // Status
-        const statusElement = document.getElementById('displayStatus');
-        if (statusElement) {
-            const status = data.status || this.calculateStatus(data.expiryDateGregorian);
-            statusElement.textContent = this.getStatusText(status);
-            statusElement.className = `status-badge status-${status}`;
-        }
+        // Handle photo display
+        this.displayPhoto();
 
-        // Educational Program
-        const displayProgramType = document.getElementById('displayProgramType');
-        if (displayProgramType) displayProgramType.textContent = data.programType || '-';
-        
-        const displayProgramExpiryDate = document.getElementById('displayProgramExpiryDate');
-        if (displayProgramExpiryDate) displayProgramExpiryDate.textContent = this.formatDate(data.programExpiryDate) || '-';
-
-        // Establishment Information
-        const displayEstablishmentName = document.getElementById('displayEstablishmentName');
-        if (displayEstablishmentName) displayEstablishmentName.textContent = data.establishmentName || '-';
-        
-        const displayEstablishmentNumber = document.getElementById('displayEstablishmentNumber');
-        if (displayEstablishmentNumber) displayEstablishmentNumber.textContent = data.establishmentNumber || '-';
-
-        // Created Date
-        let createdDate;
-        if (data.createdAt) {
-            if (data.createdAt.seconds) {
-                // Firestore timestamp
-                createdDate = new Date(data.createdAt.seconds * 1000);
-            } else if (typeof data.createdAt === 'string') {
-                // ISO string
-                createdDate = new Date(data.createdAt);
-            } else {
-                createdDate = new Date();
-            }
-        } else {
-            createdDate = new Date();
-        }
-        
-        try {
-            const displayCreatedDate = document.getElementById('displayCreatedDate');
-            if (displayCreatedDate) {
-                displayCreatedDate.textContent = this.formatDate(createdDate.toISOString().split('T')[0]);
-            }
-        } catch (dateError) {
-            console.error('Date formatting error:', dateError);
-            const displayCreatedDate = document.getElementById('displayCreatedDate');
-            if (displayCreatedDate) {
-                displayCreatedDate.textContent = 'تاريخ غير صحيح';
-            }
-        }
-
-        // Add action buttons to header after certificate is displayed
-        this.addActionButtons();
-
-        // Show certificate display
-        this.hideLoading();
-        document.getElementById('certificateDisplay').classList.remove('hidden');
+        console.log('✅ Certificate displayed successfully');
     }
 
-    calculateStatus(expiryDate) {
-        if (!expiryDate) return 'unknown';
-        
-        const today = new Date();
-        const expiry = new Date(expiryDate);
-        const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-
-        if (daysUntilExpiry < 0) {
-            return 'expired';
-        } else if (daysUntilExpiry <= 30) {
-            return 'expiring';
-        } else {
-            return 'active';
+    updateFieldSafely(fieldId, value) {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.textContent = value || '-';
         }
     }
 
-    getStatusText(status) {
+    displayPhoto() {
+        const photoElement = document.getElementById('personalPhoto');
+        const placeholderElement = document.getElementById('photoPlaceholder');
+        
+        if (this.certificateData.photo) {
+            if (photoElement) {
+                photoElement.src = this.certificateData.photo;
+                photoElement.classList.remove('photo-hidden');
+            }
+            if (placeholderElement) {
+                placeholderElement.classList.add('photo-hidden');
+            }
+        } else {
+            if (photoElement) {
+                photoElement.classList.add('photo-hidden');
+            }
+            if (placeholderElement) {
+                placeholderElement.classList.remove('photo-hidden');
+            }
+        }
+    }
+
+    copyLink() {
+        const currentUrl = window.location.href;
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            console.log('✅ Certificate link copied to clipboard');
+            this.showMessage('تم نسخ رابط الشهادة بنجاح');
+        }).catch(err => {
+            console.error('❌ Failed to copy link:', err);
+            this.showMessage('فشل في نسخ الرابط');
+        });
+    }
+
+    getStatusInArabic(status) {
         const statusMap = {
+            'valid': 'صالحة',
             'active': 'نشطة',
             'expiring': 'تنتهي قريباً',
             'expired': 'منتهية الصلاحية',
@@ -270,37 +189,37 @@ class CertificateViewer {
         }
     }
 
-    async generateQRCode() {
-        // Updated 2025-01-28 - Fixed QR generation completely
+    generateQRCode() {
+        console.log('🔄 Starting QR code generation...');
         const qrContainer = document.getElementById('qrCode');
-        if (!qrContainer) return;
+        if (!qrContainer) {
+            console.warn('⚠️ QR container not found');
+            return;
+        }
 
         const certificateUrl = window.location.href;
+        console.log('📱 Generating QR for URL:', certificateUrl);
         
-        console.log('✅ Generating QR code for:', certificateUrl);
-        console.log('🔄 Using Google Charts API directly - no external libraries needed');
-        
-        // Use Google Charts API directly (most reliable)
+        // Use Google Charts API directly - no external libraries needed
         this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
     }
 
-    // QR generation using Google Charts API (most reliable)
     generateQRWithGoogleAPI(container, url) {
-        console.log('🔄 Using Google Charts QR API...');
+        console.log('🌐 Using Google Charts API for QR generation...');
         
-        // Clear container first
-        container.innerHTML = '<div style="text-align: center; padding: 10px;">جاري تحميل رمز QR...</div>';
+        // Show loading message
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">جاري تحميل رمز QR...</div>';
         
         const qrImg = document.createElement('img');
         const encodedUrl = encodeURIComponent(url);
         qrImg.src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodedUrl}`;
-        qrImg.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
-        qrImg.alt = 'رمز QR للشهادة';
+        qrImg.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto; max-width: 150px; height: auto;';
+        qrImg.alt = 'رمز QR للشهادة الصحية';
         
         qrImg.onload = function() {
             container.innerHTML = '';
             container.appendChild(qrImg);
-            console.log('✅ Google Charts QR code loaded successfully');
+            console.log('✅ QR code loaded successfully via Google Charts');
         };
         
         qrImg.onerror = function() {
@@ -308,13 +227,13 @@ class CertificateViewer {
             this.showQRFallback(container, url);
         }.bind(this);
         
-        // Add timeout fallback
+        // Timeout fallback after 10 seconds
         setTimeout(() => {
             if (container.innerHTML.includes('جاري تحميل')) {
                 console.warn('⚠️ QR loading timeout, showing fallback');
                 this.showQRFallback(container, url);
             }
-        }.bind(this), 5000);
+        }.bind(this), 10000);
     }
     
     showQRFallback(container, url) {
@@ -334,11 +253,25 @@ class CertificateViewer {
                 </button>
             </div>
         `;
-        console.log('ℹ️ QR fallback displayed for URL:', url);
+        console.log('ℹ️ QR fallback displayed');
+    }
+
+    addActionButtons() {
+        const headerActions = document.querySelector('.header-actions');
+        if (headerActions && !headerActions.querySelector('.btn')) {
+            headerActions.innerHTML = `
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="certificateViewer.copyLink()" 
+                            style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                        📋 نسخ الرابط
+                    </button>
+                </div>
+            `;
+        }
     }
 
     showMessage(message) {
-        // Create a temporary message
         const messageDiv = document.createElement('div');
         messageDiv.style.cssText = `
             position: fixed;
@@ -356,9 +289,10 @@ class CertificateViewer {
         
         document.body.appendChild(messageDiv);
         
-        // Remove after 3 seconds
         setTimeout(() => {
-            document.body.removeChild(messageDiv);
+            if (document.body.contains(messageDiv)) {
+                document.body.removeChild(messageDiv);
+            }
         }, 3000);
     }
 
@@ -381,5 +315,5 @@ class CertificateViewer {
 
 // Initialize certificate viewer when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new CertificateViewer();
+    window.certificateViewer = new CertificateViewer();
 });
