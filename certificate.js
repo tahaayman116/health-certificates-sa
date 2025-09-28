@@ -320,30 +320,55 @@ class CertificateViewer {
                     }
                 }.bind(this));
             } else {
-                console.warn('⚠️ QRCode library not loaded, showing fallback');
-                this.showQRFallback(qrContainer, certificateUrl);
+                console.warn('⚠️ QRCode library not loaded, trying Google API backup...');
+                this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
             }
         } catch (error) {
             console.error('❌ QR code generation failed:', error);
-            this.showQRFallback(qrContainer, certificateUrl);
+            this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
         }
     }
 
-
-
-    addActionButtons() {
-        const headerActions = document.querySelector('.header-actions');
-        if (headerActions && !headerActions.querySelector('.btn')) {
-            headerActions.innerHTML = `
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                    <button onclick="certificateViewer.copyLink()" 
-                            style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;"
-                            onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
-                        📋 نسخ الرابط
-                    </button>
+    // Alternative QR generation using Google Charts API
+    generateQRWithGoogleAPI(container, url) {
+        console.log('🔄 Trying Google Charts QR API as backup...');
+        
+        const qrImg = document.createElement('img');
+        const encodedUrl = encodeURIComponent(url);
+        qrImg.src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodedUrl}`;
+        qrImg.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;';
+        qrImg.alt = 'رمز QR للشهادة';
+        
+        qrImg.onload = function() {
+            container.innerHTML = '';
+            container.appendChild(qrImg);
+            console.log('✅ Google Charts QR code loaded successfully');
+        };
+        
+        qrImg.onerror = function() {
+            console.warn('⚠️ Google Charts QR failed, showing fallback');
+            this.showQRFallback(container, url);
+        }.bind(this);
+    }
+    
+    showQRFallback(container, url) {
+        container.innerHTML = `
+            <div class="qr-placeholder" style="width: 150px; height: 150px; border: 2px dashed #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto; background: #f8f9fa;">
+                <div style="font-size: 48px; color: #6c757d; margin-bottom: 10px;">📱</div>
+                <div style="font-size: 14px; color: #6c757d; text-align: center; padding: 0 10px;">
+                    رمز التحقق
                 </div>
-            `;
-        }
+                <div style="font-size: 12px; color: #adb5bd; text-align: center; margin-top: 8px; padding: 0 10px;">
+                    استخدم الرابط أدناه
+                </div>
+                <button onclick="navigator.clipboard.writeText('${url}'); this.textContent='✅ تم النسخ!'; setTimeout(() => this.textContent='📋 نسخ الرابط', 2000)" 
+                        style="margin-top: 8px; padding: 8px 16px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s;" 
+                        onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                    📋 نسخ الرابط
+                </button>
+            </div>
+        `;
+        console.log('ℹ️ QR fallback displayed for URL:', url);
     }
 
     showMessage(message) {
