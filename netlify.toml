@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "echo 'No build step required for static site'"
+  command = "echo 'Updated 2025-01-28 - QR Code fixed'"
 
 [build.environment]
   NODE_VERSION = "18"

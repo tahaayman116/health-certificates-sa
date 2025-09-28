@@ -271,14 +271,16 @@ class CertificateViewer {
     }
 
     async generateQRCode() {
+        // Updated 2025-01-28 - Fixed QR generation completely
         const qrContainer = document.getElementById('qrCode');
         if (!qrContainer) return;
 
         const certificateUrl = window.location.href;
         
         console.log('✅ Generating QR code for:', certificateUrl);
+        console.log('🔄 Using Google Charts API directly - no external libraries needed');
         
-        // Try Google Charts API first (most reliable)
+        // Use Google Charts API directly (most reliable)
         this.generateQRWithGoogleAPI(qrContainer, certificateUrl);
     }
 
